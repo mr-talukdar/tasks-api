@@ -1,0 +1,26 @@
+{
+  "name": "task-api",
+  "version": "1.0.0",
+  "description": "A simple tasks api user-auth implemented with supabase ",
+  "homepage": "https://github.com/mr-talukdar/tasks-api#readme",
+  "bugs": {
+    "url": "https://github.com/mr-talukdar/tasks-api/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/mr-talukdar/tasks-api.git"
+  },
+  "license": "ISC",
+  "author": "Rahul Talukdar",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "node index.js"
+  },
+  "dependencies": {
+    "dotenv": "^18.0.5",
+    "express": "^5.2.1",
+    "jsonwebtoken": "^9.0.3"
+  }
+}
