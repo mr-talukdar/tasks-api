@@ -1,3 +1,11 @@
-*.env
-package-lock.json
+# Environment variables (sensitive data)
+.env
+.env.*
+
+# Dependencies
 node_modules/
+
+# Logs & OS files
+*.log
+npm-debug.log*
+.DS_Store
