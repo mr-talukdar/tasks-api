@@ -2,6 +2,7 @@ import express from "express";
 import supabase from "../../util/db/supabaseClient.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
+
 const router = express.Router();
 
 const saltRounds = parseInt(process.env.PW_SALTS);
@@ -11,7 +12,7 @@ router.post("/register", async (req, res) => {
   try {
     const { name, email, password } = req.body;
     const hashedPassword = await bcrypt.hash(password, saltRounds);
-    const { data, error } = await supabase.from("users").insert({
+    const { error } = await supabase.from("users").insert({
       name,
       email,
       password: hashedPassword,

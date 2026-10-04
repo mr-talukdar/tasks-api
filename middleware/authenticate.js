@@ -13,7 +13,7 @@ const authenticate = async (req, res, next) => {
     const token = authHeader.split(" ")[1];
     const user = await jwtVerifyAsync(token, jwt_key);
     if (!user) return res.status(401).send({ message: "User not verified" });
-    req.user = { userId: user.UserId, email: user.email };
+    req.user = { userId: user.userId, email: user.email };
     next();
   } catch (err) {
     return res.status(401).send({
