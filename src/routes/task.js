@@ -47,4 +47,35 @@ router.post("/", async (req, res) => {
   }
 });
 
+router.get("/:id", async (req, res) => {
+  try {
+    const taskId = req.params.id;
+    const { userId } = req.user;
+    const { data, error } = await supabase
+      .from("tasks")
+      .select("*")
+      .eq("user_id", userId)
+      .eq("id", taskId);
+    if (error) {
+      return res.status(400).json({
+        message: "No tasks or you are not authorised for the task",
+        error,
+      });
+    }
+    if (!data.length)
+      return res.status(400).json({
+        message: "No tasks",
+      });
+    res.status(200).json({
+      message: "Here is the data requested",
+      data,
+    });
+  } catch (error) {
+    return res.status(401).send({
+      message: "There was an error",
+      error,
+    });
+  }
+});
+
 export default router;
