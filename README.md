@@ -186,7 +186,17 @@ The server will start at `http://localhost:3000`.
   ```
 - **Responses**:
   - `201 Created`: User created successfully
+    ```json
+    {
+      "message": "User Created"
+    }
+    ```
   - `500 Internal Server Error`: Registration failed
+    ```json
+    {
+      "error": "Error details"
+    }
+    ```
 
 ---
 
@@ -202,7 +212,7 @@ The server will start at `http://localhost:3000`.
   }
   ```
 - **Responses**:
-  - `201 Created`:
+  - `200 OK`:
     ```json
     {
       "message": "user logged in",
@@ -210,6 +220,12 @@ The server will start at `http://localhost:3000`.
     }
     ```
   - `401 Unauthorized`: Invalid credentials
+    ```json
+    {
+      "message": "wrong password or user doesnt exist"
+    }
+    ```
+  - `500 Internal Server Error`: Server failure
 
 ---
 
@@ -219,6 +235,9 @@ The server will start at `http://localhost:3000`.
 > ```text
 > Authorization: Bearer <your_jwt_token>
 > ```
+> Missing or invalid authentication headers return:
+> - `401 Unauthorized`: `{"message": "No token provided"}` or `{"message": "User is not valid"}`
+> - `400 Bad Request`: `{"message": "invalid auth header"}`
 
 #### 1. Get All My Tasks
 - **Method**: `GET`
@@ -238,6 +257,7 @@ The server will start at `http://localhost:3000`.
     }
   ]
   ```
+- **Response `401 Unauthorized`**: If unable to fetch tasks for user.
 
 ---
 
@@ -258,14 +278,27 @@ The server will start at `http://localhost:3000`.
     "message": "Task Created Successfully"
   }
   ```
+- **Response `400 Bad Request`**: Database write failure.
+- **Response `501 Not Implemented` / Error**: Unexpected server error.
 
 ---
 
 #### 3. Get Single Task
 - **Method**: `GET`
 - **Endpoint**: `/task/:id`
-- **Response `200 OK`**: Task object
-- **Response `400 Bad Request` / `404 Not Found`**: Task does not exist or user is unauthorized.
+- **Response `200 OK`**:
+  ```json
+  {
+    "id": "c1f7b022-...",
+    "user_id": "84e5a9b7-...",
+    "title": "Complete Documentation",
+    "description": "Write comprehensive README",
+    "completed": false,
+    "created_at": "2026-10-04T12:00:00.000Z",
+    "updated_at": "2026-10-04T12:00:00.000Z"
+  }
+  ```
+- **Response `400 Bad Request`**: Task not found or not authorized (`{"message": "No tasks or you are not authorised for the task"}`).
 
 ---
 
@@ -275,15 +308,30 @@ The server will start at `http://localhost:3000`.
 - **Body** *(partial update)*:
   ```json
   {
+    "title": "Updated Task Title",
+    "description": "Updated description",
     "completed": true
   }
   ```
 - **Response `200 OK`**:
   ```json
   {
-    "message": "Task updated successfully"
+    "message": "Updated the task <taskId>",
+    "currentValue": [
+      {
+        "id": "c1f7b022-...",
+        "user_id": "84e5a9b7-...",
+        "title": "Updated Task Title",
+        "description": "Updated description",
+        "completed": true,
+        "created_at": "...",
+        "updated_at": "..."
+      }
+    ]
   }
   ```
+- **Response `400 Bad Request`**: Error updating task.
+- **Response `500 Internal Server Error`**: Unexpected error.
 
 ---
 
@@ -293,9 +341,16 @@ The server will start at `http://localhost:3000`.
 - **Response `200 OK`**:
   ```json
   {
-    "message": "Task deleted successfully"
+    "message": "Task Deleted Sucessfully"
   }
   ```
+- **Response `404 Not Found`**:
+  ```json
+  {
+    "message": "Task not found or unauthorized"
+  }
+  ```
+- **Response `500 Internal Server Error`**: Database error or unexpected server failure.
 
 ---
 
