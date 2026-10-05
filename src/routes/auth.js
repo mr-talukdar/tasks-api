@@ -17,10 +17,9 @@ router.post("/register", async (req, res) => {
       email,
       password: hashedPassword,
     });
-    if (error)
-      throw new Error({
-        error: error,
-      });
+    if (error) {
+      return res.status(400).send("invalid request");
+    }
     res.status(201).send({
       message: "User Created",
     });
@@ -34,41 +33,37 @@ router.post("/register", async (req, res) => {
 router.post("/login", async (req, res) => {
   try {
     const { email, password } = req.body;
-    const user = await supabase
+    const response = await supabase
       .from("users")
       .select("*")
       .eq("email", email)
       .maybeSingle();
-    if (!user) {
-      res.status(401).send({
-        message: "wrong password",
-      });
-      throw new Error({
-        message: "user doesnt exist, please register",
+    if (!response.data || response.data.length === 0) {
+      return res.status(401).send({
+        message: "wrong password or user doesnt exist",
       });
     }
 
     const pwMatch = await bcrypt.compare(password, user.data.password);
     if (!pwMatch) {
-      res.status(401).send({
+      return res.status(401).send({
         message: "wrong password",
       });
     }
 
-    const token = await jwt.sign(
+    const token = jwt.sign(
       JSON.stringify({
-        userId: user.data.id,
-        email: user.data.email,
+        userId: response.data.id,
+        email: response.data.email,
       }),
       jwtSecret,
     );
 
-    if (!token)
-      throw new Error({
-        message: "Error generating JWT",
-      });
+    if (!token) {
+      throw new Error("Error generating JWT");
+    }
 
-    res.status(201).send({
+    res.status(200).send({
       message: "user logged in",
       token,
     });

@@ -10,6 +10,9 @@ const authenticate = async (req, res, next) => {
     if (!authHeader) {
       return res.status(401).send({ message: "No token provided" });
     }
+    if (!(authHeader.split(" ")[0].toLowerCase() === "bearer")) {
+      return res.status(400).json({ message: "invalid auth header" });
+    }
     const token = authHeader.split(" ")[1];
     const user = await jwtVerifyAsync(token, jwt_key);
     if (!user) return res.status(401).send({ message: "User not verified" });
